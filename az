@@ -68,7 +68,7 @@ if [ $# -ge 1 ]; then
         path=$(echo -n $v2ray_id | tail -c 12)
     fi
 
-    proxy_site="https://zelikk.blogspot.com"
+    proxy_site="https://tiktok.com"
 
     echo -e "domain: ${domain}"
     echo -e "netstack: ${netstack}"
@@ -317,7 +317,7 @@ cat >/usr/local/etc/v2ray/config.json <<-EOF
         {
             "listen": "127.0.0.1",
             "port": $v2ray_port,             // ***
-            "protocol": "vless",
+            "protocol": "vmess",
             "settings": {
                 "clients": [
                     {
@@ -467,14 +467,14 @@ cat >/etc/caddy/Caddyfile <<-EOF
 }
 
 $domain, *.$domain {
-    tls Y3JhenlwZWFjZQ@gmail.com {
+    tls Y3JhenlwZW3FjZQ@gmail.com {
 		on_demand
 	}
     encode gzip
 
 #    多用户 多path
 #    使用说明 https://zelikk.blogspot.com/2022/11/v2ray-vless-vmess-websocket-cdn-tls-caddy-v2.html
-#    import Caddyfile.multiuser
+#   import Caddyfile.multiuser
 
     handle_path /$path {
         reverse_proxy localhost:$v2ray_port
@@ -647,6 +647,13 @@ elif  [[ $netstack == "4" ]]; then
 
     # 安装 WARP IPv6    
     bash <(curl -fsSL git.io/warp.sh) 6
+
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -P OUTPUT ACCEPT
+    iptables -F
+    ufw allow 80
+    ufw allow 443
 
     # 重启 V2Ray
     echo
